@@ -1,5 +1,5 @@
 interface KeyBoardProps {
-    letters: string[];
+    rows: string[][];
     onKeyPress: (letter: string) => void;
 }
 
@@ -10,18 +10,22 @@ function normalizeLetter(letter: string) {
         .toUpperCase(); //Transforme la lettre en majuscule.
 }
 
-export function KeyBoard({letters, onKeyPress}: KeyBoardProps) {
+export function KeyBoard({rows, onKeyPress}: KeyBoardProps) {
     return (
         <div className="keyboard">
-            {letters.map((letter) => (
-                <button
-                    key={letter}
-                    className="key"
-                    type="button"
-                    onClick={() => onKeyPress(normalizeLetter(letter))}
-                >
-                    {letter}
-                </button>
+            {rows.map((row) => (
+                <div className="keyboard-row" key={row.join('')}>
+                    {row.map((letter) => (
+                        <button
+                            key={letter}
+                            className={`key ${letter === 'Effacer' || letter === 'Entrée' ? 'action-key' : ''}`}
+                            type="button"
+                            onClick={() => onKeyPress(normalizeLetter(letter))}
+                        >
+                            {letter}
+                        </button>
+                    ))}
+                </div>
             ))}
         </div>
     );

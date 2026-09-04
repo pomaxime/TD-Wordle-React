@@ -34,6 +34,28 @@ body {
   text-transform: uppercase;
 }
 
+.layout-toggle {
+  display: block;
+  margin: 18px auto 24px;
+  padding: 10px 16px;
+  border: 1px solid #c45c32;
+  border-radius: 999px;
+  color: #c45c32;
+  background: transparent;
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.layout-toggle:hover {
+  color: #fff;
+  background: #c45c32;
+}
+
+.layout-toggle:focus-visible {
+  outline: 3px solid #c45c32;
+  outline-offset: 2px;
+}
+
 button {
   font: inherit;
 }
@@ -44,14 +66,20 @@ button {
   bottom: 0;
   left: 0;
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
   gap: 6px;
   max-width: 660px;
   margin: 0 auto;
   padding: 14px 20px 20px;
   background: rgba(244, 240, 232, 0.96);
   box-shadow: 0 -8px 24px rgba(67, 51, 32, 0.12);
+}
+
+.keyboard-row {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
 }
 
 .key {
@@ -77,13 +105,13 @@ button {
   outline-offset: 2px;
 }
 
-.key:nth-last-child(-n + 2) {
+.action-key {
   min-width: 76px;
   color: #fff;
   background: #c45c32;
 }
 
-.key:nth-last-child(-n + 2):hover {
+.action-key:hover {
   background: #a94c28;
 }
 
@@ -94,8 +122,11 @@ button {
   }
 
   .keyboard {
-    gap: 4px;
     padding: 10px 8px 14px;
+  }
+
+  .keyboard-row {
+    gap: 4px;
   }
 
   .key {
@@ -103,7 +134,7 @@ button {
     padding: 12px 5px;
   }
 
-  .key:nth-last-child(-n + 2) {
+  .action-key {
     min-width: 62px;
   }
 }
