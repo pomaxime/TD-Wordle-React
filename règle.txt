@@ -1,0 +1,129 @@
+Un mot secret de 5 lettres est choisi
+Vous avez 6 tentatives pour le trouver, chacune étant un mot de 5 lettres valide
+Après chaque tentative, chaque lettre reçoit un retour visuel :
+    - Bien placée (verte, généralement)
+    - Mal placée — présente dans le mot, mais pas à cet endroit (orange/jaune)
+    - Absente du mot (grise)
+
+Ce que votre clone doit faire
+    - Une modale d'accueil expliquant les règles, affichée au chargement (inspirez-vous du modèle!)
+    - Le jeu : Saisie des tentatives, retour visuel par lettre une fois le mot complet saisi
+    - Un clavier virtuel à l'écran, dont les lettres se désactivent (visuellement) une fois tentées et confirmées absentes du mot
+    - Une modale de fin de partie (victoire ou défaite) qui révèle le mot recherché et le nombre de tentatives effectuées (<=6)
+    - Un bouton, visible en permanence, pour rouvrir la modale de règles
+
+Ce que vous n'avez pas à faire
+    - Les statistiques de parties (nombre de victoires, séries, etc.)
+    - L'accès aux mots des journées précédentes
+
+Game
+│
+├── GuessGrid
+│   ├── GuessRow
+│   │   ├── LetterTile
+│   │   │   ├── letter
+│   │   │   └── status
+│   │   ├── LetterTile
+│   │   ├── LetterTile
+│   │   ├── LetterTile
+│   │   └── LetterTile
+│   │
+│   ├── GuessRow
+│   └── ...
+│
+├── Keyboard
+│
+└── ResultModal
+
+Composant : LetterTile 
+Props : letter, statusT 
+
+Composant : GuessRow 
+Props : guess, statusR 
+
+Composant : GuessGrid 
+Props : Row, statusG 
+
+Composant : KeyBoard 
+Props : letterKB 
+
+Composant : ResultModal 
+Props : result, word
+
+Le projet React
+Scaffoldez un nouveau projet React avec Vite, sur un dépôt partagé avec votre binôme, public pour le rendu
+
+Clone Wordle-Api : https://github.com/arbxz/wordle-api.git
+
+Le backend
+Le jeu a besoin d'un mot à deviner. On utilise un backend tout prêt : Wordle-Api.
+
+🧑‍💻 Clonez ce dépôt, puis lisez son README pour l'installer et le lancer en local; ses instructions d'installation et 
+son port d'écoute ne sont pas redonnés ici, c'est à vous de les trouver !
+
+⚠️ Attention, dans la liste des mots français, il y a des accents! Pensez à remplacer les caractères accentués 
+par leur équivalent sans accent dans le front pour la comparaison des voyelles!
+
+⚠️ Une fois lancé, vérifiez que vous pouvez bien atteindre le backend depuis votre navigateur ou un outil comme 
+Postman ou curl, avant d'essayer de l'appeler depuis votre application React.
+
+💡 Si vos requêtes fetch échouent avec une erreur liée à CORS dans la console, c'est que le navigateur bloque les requêtes 
+entre votre application (un port) et le backend (un autre port).Il faut pour ça bien configurer la variable d'environnement 
+"CLIENT_URL" (pour le développement, vous pouvez y insérer "*", même si c'est une mauvaise pratique et 
+faille de sécurité en production!)
+
+
+
+Point théorique : useEffect
+Avant de vous répartir le travail, un point commun aux deux chantiers qui suivent : 
+vous allez avoir besoin d'un nouveau Hook que vous n'avez pas encore vu en cours : useEffect.
+
+🤔 Le problème : le corps d'un composant s'exécute de façon synchrone à chaque rendu. 
+On ne peut donc pas y placer directement un appel réseau (fetch) ou un abonnement à un évènement (addEventListener) : 
+il faut un moyen d'exécuter du code après le rendu, à des moments précis (au montage, ou quand certaines valeurs changent).
+
+😱 Sinon, à chaque changement de valeur réactive, votre appel réseau est effectué de nouveau!
+
+🧑‍💻 À vous de vous renseigner, par exemple sur la documentation officielle de React (ou cette page, plus progressive), 
+avant de continuer. Vous devez être capable de répondre vous-mêmes aux questions suivantes :
+
+    - Quelle est la syntaxe de base de useEffect(() => { ... }, [...]) ?
+    - À quoi sert le tableau de dépendances passé en second argument ? 
+    - Que se passe-t-il si on le laisse vide [] ? 
+    - Si on l'omet complètement ?
+    - Qu'est-ce qu'une fonction de nettoyage (cleanup), et à quel moment est-elle appelée ?
+    - Pourquoi la fonction passée à useEffect ne peut-elle pas être déclarée async directement ?
+
+
+Point théorique : le CSS Scopé (CSS Modules)
+Un second point commun aux deux chantiers qui suivent : la manière de styliser vos composants.
+
+🤔 Le problème : vous allez travailler en parallèle, chacun sur des composants différents. Si vous écrivez chacun un fichier .css 
+classique avec des noms de classes génériques (.title, .button, .active...), rien n'empêche vos deux fichiers d'entrer 
+en collision une fois assemblés : le CSS importé quelque part dans une application React est global à toute la page, 
+pas limité au composant qui l'a importé !
+
+🧑‍💻 À vous de vous renseigner sur les CSS Modules, supportés nativement par Vite — par exemple via sa documentation officielle. 
+Vous devez être capable de répondre vous-mêmes aux questions suivantes :
+
+Comment doit-on nommer un fichier pour que Vite le traite comme un CSS Module plutôt qu'un CSS classique ?
+Une fois importé (import styles from './Composant.module.css'), qu'est-ce que contient exactement styles ? 
+Comment l'utilise-t-on dans un className ?
+En quoi ça empêche concrètement deux composants d'avoir des classes qui se marchent dessus ?
+Comment appliquer une classe différente selon une prop ou un état (par exemple, une couleur différente selon le statut d'une lettre) ?
+
+🏗️ Chantier A — Une case de la grille
+🧑‍💻 Créez un composant représentant une seule case de la grille, affichant une lettre et un statut visuel (vide, en attente, bien placée, mal placée, absente) : c'est l'occasion de mettre en pratique les CSS Modules découverts plus tôt, avec une classe différente par statut.
+
+Testez-le en l'important directement dans App.tsx et en en affichant plusieurs instances avec des props différentes, avant de construire quoi que ce soit d'autre autour (ne commitez pas ces modifications de App.tsx, pour éviter les conflits !)
+
+
+🏗️ Chantier B — Une touche du clavier
+🧑‍💻 Créez un composant représentant une seule touche du clavier virtuel : 
+une lettre, cliquable, qui pourra plus tard se désactiver visuellement.
+
+Testez-le de la même façon, isolément dans App.tsx, avec plusieurs instances 
+(dont au moins une désactivée) avant d'aller plus loin.
+
+💡 Prenez deux minutes à deux pour comparer vos deux composants : 
+ils se ressemblent sûrement plus que vous ne le pensez (une valeur affichée + un statut/état visuel) !
