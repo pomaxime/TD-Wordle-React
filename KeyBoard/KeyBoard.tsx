@@ -1,0 +1,4 @@
+interface KeyBoard{
+    letters: string[];
+}
+
