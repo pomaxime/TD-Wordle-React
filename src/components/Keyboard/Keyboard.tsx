@@ -46,8 +46,8 @@ function Keyboard({ onKeyClick, absentLetters }: KeyboardProps) {
               <button
                 key={letter}
                 type="button"
-                className={styles.key}
-                disabled={estDesactivee}
+                className={`${styles.key} ${estDesactivee ? styles.used : ""}`}
+                aria-pressed={estDesactivee}
                 onClick={() => onKeyClick(letter)}
               >
                 {letter}
