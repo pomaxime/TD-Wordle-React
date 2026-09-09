@@ -121,7 +121,7 @@
   background: var(--key-action-hover);
 }
 
-.key.used {
+.key.absent {
   border-color: transparent;
   background: #8b949c;
   color: rgba(255, 255, 255, 0.78);
@@ -129,8 +129,28 @@
   box-shadow: none;
 }
 
-.key.used:hover {
+.key.absent:hover {
   background: #737d86;
+}
+
+.key.present {
+  border-color: #c9b458;
+  background: #c9b458;
+  color: #fff;
+}
+
+.key.present:hover {
+  background: #b8a347;
+}
+
+.key.correct {
+  border-color: #6aaa64;
+  background: #6aaa64;
+  color: #fff;
+}
+
+.key.correct:hover {
+  background: #5b9955;
 }
 
 @media (max-width: 420px) {

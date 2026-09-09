@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { fetchWord } from "./api/wordle";
 import { evaluateGuess, normalize } from "./game/evaluateGuess";
-import { buildRows, getAbsentLetters, WORD_LENGTH, MAX_ATTEMPTS, type GameStatus } from "./game/gameState";
+import { buildRows, WORD_LENGTH, MAX_ATTEMPTS, type GameStatus } from "./game/gameState";
 import GuessGrid, { type Row } from "./components/GuessGrid/GuessGrid";
 import Keyboard from "./components/Keyboard/Keyboard";
+import type { LetterStatus } from "./components/LetterTile/LetterTile";
 
 function App() {
   const [secretWord, setSecretWord] = useState<string | null>(null);
@@ -90,7 +91,26 @@ function App() {
   }
 
   const rows = buildRows(guesses, currentGuess, status);
-  const absentLetters = getAbsentLetters(guesses);
+  const letterStatuses: Record<string, LetterStatus> = {};
+  const statusPriority: Record<LetterStatus, number> = {
+    empty: 0,
+    pending: 0,
+    absent: 1,
+    present: 2,
+    correct: 3,
+  };
+
+  for (const guessedRow of guesses) {
+    for (let index = 0; index < guessedRow.guess.length; index++) {
+      const letter = guessedRow.guess[index];
+      const nextStatus = guessedRow.statusR[index];
+      const currentStatus = letterStatuses[letter];
+
+      if (!currentStatus || statusPriority[nextStatus] > statusPriority[currentStatus]) {
+        letterStatuses[letter] = nextStatus;
+      }
+    }
+  }
 
   return (
     <main className="game-layout">
@@ -106,7 +126,7 @@ function App() {
         )}
         <GuessGrid rows={rows} />
         {status === "playing" && (
-          <Keyboard onKeyClick={pressKey} absentLetters={absentLetters} />
+            <Keyboard onKeyClick={pressKey} letterStatuses={letterStatuses} />
         )}
       </section>
 
