@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type { LetterStatus } from "../LetterTile/LetterTile";
 import styles from "./Keyboard.module.css";
 
 const AZERTY_ROWS = [
@@ -17,10 +18,10 @@ type KeyboardLayout = "AZERTY" | "QWERTY";
 
 interface KeyboardProps {
   onKeyClick: (letter: string) => void;
-  absentLetters: string[];
+  letterStatuses: Record<string, LetterStatus>;
 }
 
-function Keyboard({ onKeyClick, absentLetters }: KeyboardProps) {
+function Keyboard({ onKeyClick, letterStatuses }: KeyboardProps) {
   const [layout, setLayout] = useState<KeyboardLayout>("AZERTY");
   const rows = layout === "AZERTY" ? AZERTY_ROWS : QWERTY_ROWS;
 
@@ -40,14 +41,15 @@ function Keyboard({ onKeyClick, absentLetters }: KeyboardProps) {
       {rows.map((row) => (
         <div className={styles.row} key={row.join("")}>
           {row.map((letter) => {
-            const estDesactivee = absentLetters.includes(letter.toLowerCase());
+            const status = letterStatuses[letter.toLowerCase()];
+            const statusClass = status ? styles[status] : "";
 
             return (
               <button
                 key={letter}
                 type="button"
-                className={`${styles.key} ${estDesactivee ? styles.used : ""}`}
-                aria-pressed={estDesactivee}
+                className={`${styles.key} ${statusClass}`}
+                aria-label={status ? `${letter}, ${status}` : letter}
                 onClick={() => onKeyClick(letter)}
               >
                 {letter}
