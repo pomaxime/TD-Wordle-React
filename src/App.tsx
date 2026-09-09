@@ -11,14 +11,22 @@ function App() {
   const [currentGuess, setCurrentGuess] = useState("");
   const [status, setStatus] = useState<GameStatus>("loading");
 
-  // Récupère le mot du jour au chargement de la page.
-  useEffect(() => {
+  function startGame() {
+    setSecretWord(null);
+    setGuesses([]);
+    setCurrentGuess("");
+    setStatus("loading");
+
     fetchWord("fr")
       .then((word) => {
         setSecretWord(word);
         setStatus("playing");
       })
       .catch(() => setStatus("error"));
+  }
+
+  useEffect(() => {
+    startGame();
   }, []);
 
   // Ecoute le clavier physique tant que la partie est en cours.
@@ -85,16 +93,53 @@ function App() {
   const absentLetters = getAbsentLetters(guesses);
 
   return (
-    <div style={{ padding: "2rem" }}>
-      {status === "loading" && <p>Chargement du mot du jour...</p>}
-      {status === "error" && <p>Impossible de récupérer le mot du jour, réessaie plus tard.</p>}
-      {status === "won" && <p>Gagné en {guesses.length} tentative(s) ! Le mot était "{secretWord}".</p>}
-      {status === "lost" && <p>Perdu ! Le mot était "{secretWord}".</p>}
-      <GuessGrid rows={rows} />
-      {status === "playing" && (
-        <Keyboard onKeyClick={pressKey} absentLetters={absentLetters} />
-      )}
-    </div>
+    <main className="game-layout">
+      <section className="game-board" aria-label="Partie de Wordle">
+        {status === "loading" && <p>Chargement du mot du jour...</p>}
+        {status === "error" && <p>Impossible de récupérer le mot du jour, réessaie plus tard.</p>}
+        {status === "won" && <p>Gagné en {guesses.length} tentative(s) ! Le mot était "{secretWord}".</p>}
+        {status === "lost" && <p>Perdu ! Le mot était "{secretWord}".</p>}
+        {(status === "won" || status === "lost") && (
+          <button className="replay-button" type="button" onClick={startGame}>
+            Rejouer
+          </button>
+        )}
+        <GuessGrid rows={rows} />
+        {status === "playing" && (
+          <Keyboard onKeyClick={pressKey} absentLetters={absentLetters} />
+        )}
+      </section>
+
+      <aside className="rules-panel" aria-labelledby="rules-title">
+        <p className="rules-kicker">Mode d'emploi</p>
+        <h2 id="rules-title">Les règles</h2>
+        <p>Trouvez le mot français en six tentatives maximum.</p>
+        <ol className="rules-list">
+          <li>Entrez un mot de cinq lettres.</li>
+          <li>Validez avec la touche <strong>Entrée</strong>.</li>
+          <li>Utilisez <strong>Effacer</strong> pour corriger votre saisie.</li>
+        </ol>
+      </aside>
+
+      <aside className="legend-panel" aria-labelledby="legend-title">
+        <p className="rules-kicker">Repères</p>
+        <h2 id="legend-title">Code couleur</h2>
+        <div className="legend" aria-label="Signification des couleurs">
+          <div className="legend-item">
+            <span className="legend-tile legend-correct">A</span>
+            <span>Bonne lettre, bonne place</span>
+          </div>
+          <div className="legend-item">
+            <span className="legend-tile legend-present">A</span>
+            <span>Bonne lettre, mauvaise place</span>
+          </div>
+          <div className="legend-item">
+            <span className="legend-tile legend-absent">A</span>
+            <span>Lettre absente du mot</span>
+          </div>
+        </div>
+      </aside>
+    </main>
   );
 }
 

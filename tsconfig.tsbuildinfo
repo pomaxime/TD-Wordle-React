@@ -1,0 +1,1 @@
+{"root":["./src/App.tsx","./src/main.tsx","./src/vite-env.d.ts","./src/api/wordle.ts","./src/components/GuessGrid/GuessGrid.tsx","./src/components/GuessRow/GuessRow.tsx","./src/components/Keyboard/Keyboard.tsx","./src/components/LetterTile/LetterTile.tsx","./src/game/evaluateGuess.ts","./src/game/gameState.ts","./KeyBoard/KeyBoard.tsx"],"version":"5.9.3"}
