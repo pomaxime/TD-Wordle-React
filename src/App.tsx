@@ -11,14 +11,22 @@ function App() {
   const [currentGuess, setCurrentGuess] = useState("");
   const [status, setStatus] = useState<GameStatus>("loading");
 
-  // Récupère le mot du jour au chargement de la page.
-  useEffect(() => {
+  function startGame() {
+    setSecretWord(null);
+    setGuesses([]);
+    setCurrentGuess("");
+    setStatus("loading");
+
     fetchWord("fr")
       .then((word) => {
         setSecretWord(word);
         setStatus("playing");
       })
       .catch(() => setStatus("error"));
+  }
+
+  useEffect(() => {
+    startGame();
   }, []);
 
   // Ecoute le clavier physique tant que la partie est en cours.
@@ -90,6 +98,11 @@ function App() {
       {status === "error" && <p>Impossible de récupérer le mot du jour, réessaie plus tard.</p>}
       {status === "won" && <p>Gagné en {guesses.length} tentative(s) ! Le mot était "{secretWord}".</p>}
       {status === "lost" && <p>Perdu ! Le mot était "{secretWord}".</p>}
+      {(status === "won" || status === "lost") && (
+        <button className="replay-button" type="button" onClick={startGame}>
+          Rejouer
+        </button>
+      )}
       <GuessGrid rows={rows} />
       {status === "playing" && (
         <Keyboard onKeyClick={pressKey} absentLetters={absentLetters} />

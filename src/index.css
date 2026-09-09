@@ -95,6 +95,33 @@ p {
   margin: 0;
 }
 
+.replay-button {
+  margin: 1rem 0 0.5rem;
+  padding: 0.7rem 1.25rem;
+  border: 1px solid var(--accent-border);
+  border-radius: 0.5rem;
+  color: #fff;
+  background: var(--accent);
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 120ms ease, filter 120ms ease;
+}
+
+.replay-button:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
+}
+
+.replay-button:active {
+  transform: translateY(1px);
+}
+
+.replay-button:focus-visible {
+  outline: 3px solid var(--accent-border);
+  outline-offset: 3px;
+}
+
 code,
 .counter {
   font-family: var(--mono);
