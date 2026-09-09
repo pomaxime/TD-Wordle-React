@@ -1,13 +1,9 @@
 import { useEffect, useState } from "react";
 import { fetchWord } from "./api/wordle";
 import { evaluateGuess, normalize } from "./game/evaluateGuess";
+import { buildRows, getAbsentLetters, WORD_LENGTH, MAX_ATTEMPTS, type GameStatus } from "./game/gameState";
 import GuessGrid, { type Row } from "./components/GuessGrid/GuessGrid";
-import type { LetterStatus } from "./components/LetterTile/LetterTile";
-
-const WORD_LENGTH = 5;
-const MAX_ATTEMPTS = 6;
-
-type GameStatus = "loading" | "playing" | "won" | "lost" | "error";
+import Keyboard from "./components/Keyboard/Keyboard";
 
 function App() {
   const [secretWord, setSecretWord] = useState<string | null>(null);
@@ -26,36 +22,11 @@ function App() {
   }, []);
 
   // Ecoute le clavier physique tant que la partie est en cours.
-  // (en attendant le clavier virtuel, développé sur une autre branche)
   useEffect(() => {
     if (status !== "playing") return;
 
     function handleKeyDown(event: KeyboardEvent) {
-      const toucheAppuyee = event.key;
-
-      if (toucheAppuyee === "Enter") {
-        submitGuess();
-        return;
-      }
-
-      if (toucheAppuyee === "Backspace") {
-        const guessSansDerniereLettre = currentGuess.slice(0, currentGuess.length - 1);
-        setCurrentGuess(guessSansDerniereLettre);
-        return;
-      }
-
-      // On ignore tout ce qui n'est pas une seule lettre (Shift, flèches, F5...)
-      const estUneSeuleLettre = toucheAppuyee.length === 1;
-      if (!estUneSeuleLettre) return;
-
-      const lettre = normalize(toucheAppuyee);
-      const estUneLettreDeAaZ = lettre >= "a" && lettre <= "z";
-      if (!estUneLettreDeAaZ) return;
-
-      const motPasEncoreComplet = currentGuess.length < WORD_LENGTH;
-      if (motPasEncoreComplet) {
-        setCurrentGuess(currentGuess + lettre);
-      }
+      pressKey(event.key);
     }
 
     window.addEventListener("keydown", handleKeyDown);
@@ -63,7 +34,35 @@ function App() {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [status, currentGuess, secretWord]);
+  }, [status, currentGuess, secretWord, guesses]);
+
+  // Appelée pour chaque touche pressée, que ce soit au clavier physique
+  // ou en cliquant sur le clavier virtuel à l'écran.
+  function pressKey(key: string) {
+    if (key === "Enter" || key === "Entrée") {
+      submitGuess();
+      return;
+    }
+
+    if (key === "Backspace" || key === "Effacer") {
+      const guessSansDerniereLettre = currentGuess.slice(0, currentGuess.length - 1);
+      setCurrentGuess(guessSansDerniereLettre);
+      return;
+    }
+
+    // On ignore tout ce qui n'est pas une seule lettre (Shift, flèches, F5...)
+    const estUneSeuleLettre = key.length === 1;
+    if (!estUneSeuleLettre) return;
+
+    const lettre = normalize(key);
+    const estUneLettreDeAaZ = lettre >= "a" && lettre <= "z";
+    if (!estUneLettreDeAaZ) return;
+
+    const motPasEncoreComplet = currentGuess.length < WORD_LENGTH;
+    if (motPasEncoreComplet) {
+      setCurrentGuess(currentGuess + lettre);
+    }
+  }
 
   function submitGuess() {
     if (!secretWord) return;
@@ -82,27 +81,8 @@ function App() {
     }
   }
 
-  // Construit les 6 lignes de la grille : les tentatives déjà jouées,
-  // la tentative en cours de saisie, puis des lignes vides.
-  const rows: Row[] = [];
-
-  for (let i = 0; i < MAX_ATTEMPTS; i++) {
-    if (i < guesses.length) {
-      rows.push(guesses[i]);
-      continue;
-    }
-
-    if (i === guesses.length && status === "playing") {
-      const statusR: LetterStatus[] = [];
-      for (let letterIndex = 0; letterIndex < WORD_LENGTH; letterIndex++) {
-        statusR.push(letterIndex < currentGuess.length ? "pending" : "empty");
-      }
-      rows.push({ guess: currentGuess, statusR });
-      continue;
-    }
-
-    rows.push({ guess: "", statusR: ["empty", "empty", "empty", "empty", "empty"] });
-  }
+  const rows = buildRows(guesses, currentGuess, status);
+  const absentLetters = getAbsentLetters(guesses);
 
   return (
     <div style={{ padding: "2rem" }}>
@@ -111,6 +91,9 @@ function App() {
       {status === "won" && <p>Gagné en {guesses.length} tentative(s) ! Le mot était "{secretWord}".</p>}
       {status === "lost" && <p>Perdu ! Le mot était "{secretWord}".</p>}
       <GuessGrid rows={rows} />
+      {status === "playing" && (
+        <Keyboard onKeyClick={pressKey} absentLetters={absentLetters} />
+      )}
     </div>
   );
 }

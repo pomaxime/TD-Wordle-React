@@ -1,7 +1,7 @@
 import type { LetterStatus } from "../components/LetterTile/LetterTile";
 
 // Enleve les accents et met en minuscules.
-// Exemple : normalize("Café") renvoie "cafe"
+// Exemple : normalize("Café") renvoie "cafe" et on garde en lowercase
 export function normalize(word: string): string {
   const wordSansAccents = word.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
   return wordSansAccents.toLowerCase();
