@@ -10,6 +10,7 @@
   flex-direction: column;
   gap: clamp(0.35rem, 1.5vw, 0.6rem);
   width: min(100%, 37rem);
+  max-width: calc(100vw - 2rem);
   margin: 1.75rem auto 0;
   padding: clamp(0.75rem, 2vw, 1.25rem);
   box-sizing: border-box;
@@ -19,10 +20,55 @@
   box-shadow: 0 0.75rem 2rem rgba(23, 32, 42, 0.08);
 }
 
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.25rem;
+}
+
+.layoutLabel {
+  color: var(--key-text);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.layoutToggle {
+  padding: 0.45rem 0.7rem;
+  border: 1px solid var(--key-border);
+  border-radius: 0.45rem;
+  color: var(--key-text);
+  background: var(--key-background);
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 750;
+  cursor: pointer;
+  transition: background-color 120ms ease, transform 120ms ease;
+}
+
+.layoutToggle:hover {
+  background: var(--key-background-hover);
+  transform: translateY(-1px);
+}
+
+.layoutToggle:active {
+  transform: translateY(1px);
+}
+
+.layoutToggle:focus-visible {
+  outline: 3px solid var(--accent, #aa3bff);
+  outline-offset: 2px;
+}
+
 .row {
   display: flex;
   justify-content: center;
   gap: clamp(0.2rem, 1vw, 0.45rem);
+  width: 100%;
+  min-width: 0;
 }
 
 .key {
@@ -40,6 +86,7 @@
   font-weight: 750;
   line-height: 1;
   text-transform: uppercase;
+  white-space: nowrap;
   cursor: pointer;
   user-select: none;
   transition: transform 120ms ease, background-color 120ms ease, box-shadow 120ms ease;
@@ -62,9 +109,11 @@
 
 .row:last-child .key:first-child,
 .row:last-child .key:last-child {
-  flex-grow: 1.6;
+  flex-grow: 2.4;
+  padding-inline: 0.25rem;
   color: #fff;
   background: var(--key-action);
+  font-size: clamp(0.58rem, 2vw, 0.85rem);
 }
 
 .row:last-child .key:first-child:hover:not(:disabled),
@@ -83,11 +132,29 @@
 
 @media (max-width: 420px) {
   .keyboard {
-    padding-inline: 0.5rem;
+    max-width: calc(100vw - 1rem);
+    padding: 0.65rem 0.45rem;
     border-radius: 0.75rem;
   }
 
+  .row {
+    gap: 0.2rem;
+  }
+
   .key {
+    height: 2.6rem;
+    padding-inline: 0.1rem;
     border-radius: 0.4rem;
+    font-size: 0.68rem;
+  }
+
+  .row:last-child .key:first-child,
+  .row:last-child .key:last-child {
+    padding-inline: 0.1rem;
+    font-size: 0.58rem;
+  }
+
+  .layoutLabel {
+    font-size: 0.65rem;
   }
 }
